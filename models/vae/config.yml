@@ -1,0 +1,54 @@
+## name
+name: VAEGenerate 
+
+## tokenizer hyperparameters
+tokenizer_name: CharTokenizer
+tokenizer_path: None
+
+## training hyperparameters
+epochs: 10
+batch_size: 512
+max_length: 100
+config_path: None
+model_path: None
+save_frequency: 2
+
+## training opt hyperparameters
+clip_grad: 50
+kl_start: 0
+kl_w_start: 0.0
+kl_w_end: 0.05
+lr_start: 0.0003
+lr_n_period: 10
+lr_n_restarts: 10
+lr_n_mult: 1
+lr_end: 0.0003
+n_last: 1000
+
+## model hyperparameters
+encoder_hidden_size: 256
+encoder_num_layers: 1
+encoder_bidirectional: false
+encoder_z_liner_dim: 128
+decoder_hidden_size: 512
+decoder_num_layers: 3
+decoder_bidirectional: false
+decoder_z_liner_dim: 512
+encodr_dropout_rate: 0.5
+decoder_dropout_arte: 0
+encoder_rnn_type: gru
+decoder_rnn_type: gru
+freeze_embeddings: false
+
+## prediction hyperparameters
+n_samples: 10000
+temp: 1.0
+
+## wandb
+use_wandb: true
+wandb_name: None
+wandb_dir: None
+wandb_notes: None # xx baseline
+wandb_tag:
+  - baseline
+    vae
