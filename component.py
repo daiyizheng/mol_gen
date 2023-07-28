@@ -7,7 +7,6 @@
 from __future__ import annotations
 from typing import Text, Optional, Any, Dict, List
 import copy, argparse
-import sys, datetime
 
 import torch
 
@@ -67,11 +66,11 @@ class Component(metaclass=ComponentMetaclass):
             self.defaults, component_config
         )
         if self.component_config["use_wandb"]:
-            project = self.component_config["project"] if self.component_config["project"] else self.name
-            wandb_name = self.component_config["wandb_name"] if self.component_config["wandb_name"] else datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-            wandb_dir = self.component_config["wandb_dir"] if self.component_config["wandb_dir"] else sys.path[0]
-            wandb_notes = self.component_config["wandb_notes"] if self.component_config["wandb_notes"] else self.name
-            wandb_tags = self.component_config["wandb_tags"] if self.component_config["wandb_tags"] else ["baseline", self.name]
+            project = self.component_config["project"]
+            wandb_name = self.component_config["wandb_name"]
+            wandb_dir = self.component_config["wandb_dir"]
+            wandb_notes = self.component_config["wandb_notes"]
+            wandb_tags = self.component_config["wandb_tags"]
             self.log = WandbLogger(project=project,
                                    name=wandb_name,
                                    dir=wandb_dir,

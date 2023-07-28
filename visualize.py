@@ -12,7 +12,6 @@ import logging
 import warnings
 
 import pprint
-from itertools import islice, chain
 
 separator = ">" * 30
 line = "-" * 30

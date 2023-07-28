@@ -1,3 +1,5 @@
 **/*.pyc
 datasets/*
 results/*
+wandb/*
+.vscode/*
