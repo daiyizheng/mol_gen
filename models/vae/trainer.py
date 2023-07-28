@@ -72,6 +72,10 @@ class VAEGenerate(Component):
         # sample hyperparameters
         "n_samples": 10000, # number of samples
         "temp":1.0,
+        "wandb_name": datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+        "wandb_dir": sys.path[0],
+        "wandb_notes": "baseline",
+        "wandb_tags": ["baseline", "vae"]
     }
 
     def __init__(self,
