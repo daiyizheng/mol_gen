@@ -29,10 +29,8 @@ def sample(config):
 
 if __name__ == '__main__':
     set_seed(2023)
-    path = "datasets/vae_config.yml"
+    path = "/DYZ/dyz1/custom_package/mol_gen/datasets/vae_config.yml"
     config = read_config_yaml(path)
     train(config=config)
     sample(config=config)
-    
-
     

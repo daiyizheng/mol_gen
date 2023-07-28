@@ -46,9 +46,9 @@ temp: 1.0
 
 ## wandb
 use_wandb: true
-wandb_name: None
-wandb_dir: None
-wandb_notes: None # xx baseline
+wandb_name: 
+wandb_dir: 
+wandb_notes:  # xx baseline
 wandb_tag:
   - baseline
     vae

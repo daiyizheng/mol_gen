@@ -78,6 +78,8 @@ class Component(metaclass=ComponentMetaclass):
                                    tags = wandb_tags)
         else:
             self.log = LoggingLogger()
+            
+        self.log.log_config(self.component_config)
 
     @property
     def name(self) -> Text:

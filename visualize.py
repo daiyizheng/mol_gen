@@ -9,9 +9,12 @@ Version          :1.0
 '''
 
 import logging
+from typing import Text
 import warnings
 
 import pprint
+
+from wandb import AlertLevel
 
 separator = ">" * 30
 line = "-" * 30
@@ -43,6 +46,9 @@ class LoggerBase(object):
             config (dict): hyperparameter config
         """
         raise NotImplementedError
+    
+    def finish(self):
+        pass
 
 class LoggingLogger(LoggerBase):
     """
@@ -79,6 +85,9 @@ class LoggingLogger(LoggerBase):
 
     def log_config(self, config):
         self.logger.warning(pprint.pformat(config))
+        
+    def summary(self, best_score:dict):
+        self.logger.warning(pprint.pformat(best_score))
 
 
 class WandbLogger(LoggingLogger):
@@ -132,4 +141,17 @@ class WandbLogger(LoggingLogger):
     def log_config(self, confg_dict):
         super(WandbLogger, self).log_config(confg_dict)
         self.run.config.update(confg_dict)
+        
+    def summary(self, best_score:dict):
+        super(WandbLogger, self).summary(best_score)
+        self.run.summary.update(best_score)
+        
+    def finish(self):
+        self.run.finish()
+        
+    def alert(self, title, text, level=AlertLevel.WARN):
+        self.run.alert(title=title, text=text, level=level)
+    
+    def save(self, filename:Text):
+        self.run.save(filename)
 

@@ -87,6 +87,7 @@ class VAEGenerate(Component):
                                           **kwargs)
         self.tokenizer = tokenizer
         self.model = model
+        self.step_id = 0
     
     def process(self, data):
         data = read_smiles_csv(data)
@@ -95,6 +96,7 @@ class VAEGenerate(Component):
     def create_tokenizer(self, data)->Tokenizer:
         ## 初始化tokenizer
         path = self.component_config["tokenizer_path"] if self.component_config["tokenizer_path"] else os.path.join(sys.path[0], self.name+"_tokenizer.json")
+        data = read_smiles_csv(data)
         tk = TOKENIZER_CLASS[self.component_config["tokenizer_name"]].from_data(data=data)
         tk.save_config(path)
         return tk
@@ -149,13 +151,12 @@ class VAEGenerate(Component):
         for epoch in range(self.component_config["epochs"]):
             tqdm_data = tqdm(train_loader, desc='Training (epoch #{})'.format(epoch))
             kl_weight = kl_annealer(epoch)
-            self._train_epoch(epoch, tqdm_data, kl_weight, optimizer)
+            postfix = self._train_epoch(epoch, tqdm_data, kl_weight, optimizer)
+            
                       
             if val_loader is not None:
                 tqdm_data = tqdm(val_loader, desc='Validation (epoch #{})'.format(epoch))
                 self.evaulate(tqdm_data, kl_weight, epoch)
-                
-                
             # Epoch end
             lr_annealer.step()
             
@@ -205,7 +206,7 @@ class VAEGenerate(Component):
         kl_loss_values = CircularBuffer(self.component_config["n_last"])
         recon_loss_values = CircularBuffer(self.component_config["n_last"])
         loss_values = CircularBuffer(self.component_config["n_last"])
-        for input_batch in tqdm_data:
+        for _, input_batch in enumerate(tqdm_data):
             input_batch = tuple(data.to(self.device) for data in input_batch)
 
             # Forward
@@ -237,6 +238,14 @@ class VAEGenerate(Component):
                        f'recon={recon_loss_value:.5f})',
                        f'klw={kl_weight:.5f} lr={lr:.5f}']
             tqdm_data.set_postfix_str(' '.join(postfix))
+            self.step_id +=1
+            self.log.log(record={"loss":loss_value, 
+                                 "kl_loss":kl_loss_value, 
+                                 "recon_loss":recon_loss, 
+                                 "kl_weight":kl_weight, 
+                                 "lr":lr}, 
+                         step_id=self.step_id,
+                         category="train/batch" if optimizer is not None else "val/batch")
 
         postfix = {
             'epoch': epoch,
